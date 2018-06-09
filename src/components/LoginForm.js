@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
+import firebase from 'firebase';
 import { 
     Button, 
     Card, 
@@ -8,7 +9,21 @@ import {
 } from './common'
 class LoginForm extends Component {
     state = { email: ''};
-    state = { password: ''}
+    state = { password: '', error: ''}
+// since our button will be called in future, we have to bind this method in button
+    onButtonPress(){
+        // Get the email and password from state
+        const { email, password } = this.state;
+        firebase.auth()
+        .signInWithEmailAndPassword(email,password)
+        .catch(() =>{
+            firebase.auth().createUserWithEmailAndPassword(email,password)
+            .catch(()=>{
+                console.log("fail");
+                this.setState({error: 'Authentication Failed. '});
+            });
+        });
+    }
     render() {
         const {inputFieldStyle} = styles
         return (
@@ -30,9 +45,11 @@ class LoginForm extends Component {
                         onChangeText={password => this.setState({ password })} // onChangeText has to be passed as well
                         />
                 </CardSection>
-
+                <Text style={styles.errorTextStyle}>
+                    {this.state.error}
+                </Text>
                 <CardSection>
-                    <Button>
+                    <Button onPress={this.onButtonPress.bind(this)}> 
                         Log In
                     </Button>
                 </CardSection>
@@ -44,6 +61,10 @@ const styles = {
     inputFieldStyle:{
         height: 50,
         width: 100
+    },
+    errorTextStyle: {
+        fontSize: 20,
+        alignSelf: 'center'
     }
 }
 module.exports = LoginForm;
