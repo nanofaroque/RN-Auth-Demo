@@ -14,6 +14,7 @@ class LoginForm extends Component {
             <Card>
                 <CardSection>
                         <Input 
+                            placeholder="user@email.com"
                             label="Email"
                             value={this.state.text} //value has to pass to our input as a prop since we still to use that text
                             onChangeText={text => this.setState({ text})} // onChangeText has to be passed as well
