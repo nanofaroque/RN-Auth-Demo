@@ -7,7 +7,8 @@ import {
     Input 
 } from './common'
 class LoginForm extends Component {
-    state = { text: ''};
+    state = { email: ''};
+    state = { password: ''}
     render() {
         const {inputFieldStyle} = styles
         return (
@@ -16,11 +17,19 @@ class LoginForm extends Component {
                         <Input 
                             placeholder="user@email.com"
                             label="Email"
-                            value={this.state.text} //value has to pass to our input as a prop since we still to use that text
-                            onChangeText={text => this.setState({ text})} // onChangeText has to be passed as well
+                            value={this.state.email} //value has to pass to our input as a prop since we still to use that text
+                            onChangeText={email => this.setState({ email })} // onChangeText has to be passed as well
                             />
                 </CardSection>
-                <CardSection/>
+                <CardSection>
+                    <Input 
+                        secureTextEntry="true"
+                        placeholder="password"
+                        label="Password"
+                        value={this.state.password} //value has to pass to our input as a prop since we still to use that text
+                        onChangeText={password => this.setState({ password })} // onChangeText has to be passed as well
+                        />
+                </CardSection>
 
                 <CardSection>
                     <Button>
