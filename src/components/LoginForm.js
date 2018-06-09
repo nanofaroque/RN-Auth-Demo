@@ -5,24 +5,54 @@ import {
     Button, 
     Card, 
     CardSection,
-    Input 
+    Input, 
+    Spinner
 } from './common'
 class LoginForm extends Component {
     state = { email: ''};
-    state = { password: '', error: ''}
+    state = { password: '', error: '', loading: false}
 // since our button will be called in future, we have to bind this method in button
     onButtonPress(){
         // Get the email and password from state
         const { email, password } = this.state;
+        this.setState({error:''});
+        this.setState({loading:true});
         firebase.auth()
         .signInWithEmailAndPassword(email,password)
+        .then(result=>{
+            this.onLoginSuccess.bind(this);
+            console.log(JSON.stringify(result));
+        })
         .catch(() =>{
             firebase.auth().createUserWithEmailAndPassword(email,password)
-            .catch(()=>{
-                console.log("fail");
-                this.setState({error: 'Authentication Failed. '});
+            .then(this.onLoginSuccess.bind(this))
+            .catch(this.onLoginFail.bind(this));
+        })
+        
+    }
+    onLoginFail(){
+        this.setState({
+            loading: false,
+            error: 'Authentication Failed'
             });
-        });
+    }
+    onLoginSuccess(){
+        this.setState({
+            email: '',
+            password: '',
+            loading: false,
+            error: ''
+            });
+    }
+    renderButton(){
+        if(this.state.loading){
+            return <Spinner size = "small"/>
+        }
+        return (
+            <Button onPress={this.onButtonPress.bind(this)}> 
+                Log In
+            </Button>
+        )
     }
     render() {
         const {inputFieldStyle} = styles
@@ -49,9 +79,7 @@ class LoginForm extends Component {
                     {this.state.error}
                 </Text>
                 <CardSection>
-                    <Button onPress={this.onButtonPress.bind(this)}> 
-                        Log In
-                    </Button>
+                    {this.renderButton()};
                 </CardSection>
             </Card>
         )
